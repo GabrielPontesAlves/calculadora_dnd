@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mestre de RPG - Calculadora de Encontros</title>
+        
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+        
+        <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.4.2/css/all.min.css">
+        
+        <style>
+            /* --- ESTILO ESTÉTICA LIVRO OFICIAL D&D 5e --- */
+            body {
+                background-color: #EFE6DC !important; /* Cor de pergaminho antigo */
+                color: #3B2F2F !important; /* Marrom sépia escuro para leitura ideal */
+                font-family: 'Georgia', 'Times New Roman', serif;
+            }
+            
+            /* Barra de Navegação Superior */
+            .navbar-rpg {
+                background-color: #FFFDF9 !important; /* Papel claro */
+                border-bottom: 3px solid #7A2021 !important; /* Linha divisória Vermelho D&D */
+                box-shadow: 0 2px 8px rgba(60, 50, 40, 0.1);
+            }
+            
+            .navbar-rpg .navbar-brand {
+                color: #7A2021 !important;
+                font-weight: bold;
+            }
+            
+            .navbar-rpg .nav-link {
+                color: #5C4A4A !important;
+                font-weight: bold !important;
+            }
+            
+            .navbar-rpg .nav-link:hover {
+                color: #7A2021 !important;
+            }
+            
+            /* Cards do Bestiário */
+            .card-rpg {
+                background-color: #FFFDF9 !important; /* Fundo imitando papel limpo */
+                border: 1px solid #D0C3B1 !important; /* Borda cor de couro/latão envelhecido */
+                border-radius: 6px;
+                transition: transform 0.2s, border-color 0.2s;
+                box-shadow: 0 3px 6px rgba(60, 50, 40, 0.08) !important;
+            }
+            
+            .card-rpg:hover {
+                transform: translateY(-2px);
+                border-color: #7A2021 !important;
+                box-shadow: 0 6px 12px rgba(122, 32, 33, 0.15) !important;
+            }
+            
+            /* Painel Lateral do Encontro Atual (Sidebar) */
+            .sidebar-carrinho {
+                background-color: #FBF7F0 !important;
+                border: 1px solid #C4B49F !important;
+                border-left: 4px solid #7A2021 !important;
+                border-radius: 6px;
+                padding: 20px;
+                box-shadow: 0 4px 10px rgba(60, 50, 40, 0.08) !important;
+            }
+            
+            /* Garante visibilidade das fontes dentro dos cards */
+            .card-rpg h2, .card-rpg h4, .card-rpg p, .card-rpg label,
+            .sidebar-carrinho h4, .sidebar-carrinho p, .sidebar-carrinho span {
+                color: #3B2F2F !important;
+            }
+            
+            /* Forçar títulos principais para o Vermelho D&D */
+            .text-warning, .navbar-brand, h2, h4.card-title {
+                color: #7A2021 !important;
+            }
+            
+            .text-light-rpg {
+                color: #3B2F2F !important;
+            }
+            
+            .text-muted, .text-muted-rpg {
+                color: #7D6B6B !important;
+            }
+            
+            /* Botões Principais */
+            .btn-gold, .btn-warning {
+                background-color: #7A2021 !important;
+                border-color: #63191A !important;
+                color: #FFFFFF !important;
+                font-weight: bold;
+            }
+            
+            .btn-gold:hover, .btn-warning:hover {
+                background-color: #5C1819 !important;
+                color: #FFFFFF !important;
+            }
+            
+            /* Campos de Seleção (Filtros) e inputs */
+            .form-select, .form-control {
+                background-color: #FFFFFF !important;
+                color: #3B2F2F !important;
+                border: 1px solid #C4B49F !important;
+            }
+            
+            /* Botões de + e - do contador */
+            .btn-outline-light {
+                color: #7A2021 !important;
+                border-color: #C4B49F !important;
+                background-color: #FFFDF9 !important;
+            }
+            .btn-outline-light:hover {
+                background-color: #EFE6DC !important;
+            }
+            
+            /* Badge ND */
+            .badge-nd {
+                background-color: #E6DCC8 !important;
+                color: #7A2021 !important;
+                border: 1px solid #7A2021 !important;
+                font-weight: bold;
+            }
+            
+            .text-truncate-3 {
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;  
+                overflow: hidden;
+            }
+        </style>
+    </head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-rpg mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">
+                <i class="fa-solid fa-dice-d20 me-2"></i>Mestre de RPG
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fa-solid fa-book-skull me-1"></i> Bestiário</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('lista_partys') }}"><i class="fa-solid fa-users me-1"></i> Grupos (Partys)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('lista_encontros') }}"><i class="fa-solid fa-swords me-1"></i> Encontros Salvos</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

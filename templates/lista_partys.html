@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold text-warning mb-0"><i class="fa-solid fa-users-rectangle me-2"></i>Grupos de Jogadores Cadastrados</h2>
+    <a href="/" class="btn btn-gold btn-sm"><i class="fa-solid fa-dragon me-1"></i> Montar Encontro</a>
+</div>
+
+<div class="table-responsive card card-rpg shadow p-2">
+    <table class="table table-hover align-middle mb-0" style="color: #3B2F2F;">
+        <thead>
+            <tr style="border-bottom: 2px solid #7A2021;">
+                <th style="color: #7A2021; font-weight: bold;">Nome da Party</th>
+                <th style="color: #7A2021; font-weight: bold;">Qtd. Jogadores</th>
+                <th style="color: #7A2021; font-weight: bold;">Nível do Grupo</th>
+                <th class="text-center" style="color: #7A2021; font-weight: bold;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in partys %}
+            <tr style="border-bottom: 1px solid rgba(60, 50, 40, 0.1);">
+                <td class="fw-bold" style="color: #7A2021;">{{ p.nome }}</td>
+                <td>{{ p.qtd_jogadores }} jogadores</td>
+                <td><span class="badge badge-nd">Nível {{ p.nivel_jogadores }}</span></td>
+                <td class="text-center">
+                    <a href="{{ url_for('editar_party', id=p.id) }}" class="btn btn-sm btn-warning fw-bold"><i class="fa-solid fa-pen-to-square me-1"></i>Editar</a>
+                    <a href="{{ url_for('deletar_party', id=p.id) }}" class="btn btn-sm btn-outline-danger fw-bold" onclick="return confirm('Tem certeza que deseja apagar essa Party e todos os encontros dela?')"><i class="fa-solid fa-trash-can me-1"></i>Excluir</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted-rpg py-4 fw-bold">
+                    <i class="fa-solid fa-shield-halved d-block fa-2x mb-2" style="opacity: 0.3; color: #7A2021;"></i>
+                    Nenhuma party salva ainda. Monte um encontro na página inicial para registrar!
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <div class="card card-rpg p-5 shadow">
+            
+            <h6 class="text-uppercase text-warning fw-bold mb-1" style="letter-spacing: 2px;"><i class="fa-solid fa-hourglass-end me-1"></i> Cálculo Concluído</h6>
+            <h1 class="fw-bold text-light-rpg mb-4">Encontro: {{ nome_encontro }}</h1>
+            
+            <!-- Painel de Dificuldade Central (Estilo Bloco de D&D) -->
+            <div class="py-4 my-4 rounded-3 shadow-sm border" style="background-color: #F5EDF2; border-color: #D0C3B1 !important;">
+                <p class="text-muted-rpg mb-1 fw-bold text-uppercase small" style="letter-spacing: 1px;">Dificuldade do Combate:</p>
+                
+                {% if resultado == 'Mortal' %}
+                    <h2 class="display-4 fw-bold text-danger animate-pulse m-0"><i class="fa-solid fa-skull-crossbones me-2"></i>MORTAL</h2>
+                    <span class="badge bg-danger text-white px-3 py-2 mt-2 shadow-sm">Risco extremo de TPK (Morte do Grupo)</span>
+                {% elif resultado == 'Difícil' %}
+                    <h2 class="display-4 fw-bold m-0" style="color: #E0A800;"><i class="fa-solid fa-burst me-2"></i>DIFÍCIL</h2>
+                    <span class="badge text-dark px-3 py-2 mt-2 shadow-sm" style="background-color: #E0A800; color: #FFFDF9 !important;">Ameaça séria, gastará recursos</span>
+                {% elif resultado == 'Médio' %}
+                    <h2 class="display-4 fw-bold m-0" style="color: #3B2F2F;"><i class="fa-solid fa-shield-halved me-2"></i>MÉDIO</h2>
+                    <span class="badge px-3 py-2 mt-2 shadow-sm" style="background-color: #D0C3B1; color: #3B2F2F;">Combate balanceado</span>
+                {% else %}
+                    <h2 class="display-4 fw-bold text-success m-0"><i class="fa-solid fa-wand-sparkles me-2"></i>FÁCIL</h2>
+                    <span class="badge bg-success text-white px-3 py-2 mt-2 shadow-sm">Vitória tranquila para o grupo</span>
+                {% endif %}
+            </div>
+
+            <!-- Resumo dos Dados Laterais (Alinhados e Limpos) -->
+            <div class="row g-3 mb-4 text-start justify-content-center">
+                <!-- Caixa da Party -->
+                <div class="col-sm-5 p-3 rounded border mx-2" style="background-color: #FFFDF9; border-color: #D0C3B1 !important;">
+                    <span class="text-muted-rpg small d-block text-uppercase fw-bold" style="font-size: 0.75rem;">Grupo Enfrentando:</span>
+                    <strong class="fs-5" style="color: #7A2021;"><i class="fa-solid fa-shield me-1 text-warning"></i>{{ nome_party }}</strong>
+                    <span class="d-block text-muted-rpg small mt-1 fw-bold">{{ qtd_players }} Jogadores | Nível {{ nivel_players }}</span>
+                </div>
+                
+                <!-- Caixa das Criaturas -->
+                <div class="col-sm-5 p-3 rounded border mx-2" style="background-color: #FFFDF9; border-color: #D0C3B1 !important;">
+                    <span class="text-muted-rpg small d-block text-uppercase fw-bold" style="font-size: 0.75rem; margin-bottom: 4px;">Criaturas no Combate:</span>
+                    <div class="overflow-auto" style="max-height: 55px;">
+                        {% for item in carrinho %}
+                            <span class="badge small text-dark me-1 mb-1" style="background-color: #EFE6DC; border: 1px solid #C4B49F;">{{ item.nome }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4" style="opacity: 0.15;">
+
+            <!-- Botões de Navegação -->
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                <a href="/" class="btn btn-outline-light px-4 fw-bold"><i class="fa-solid fa-rotate-left me-1"></i> Ajustar Criaturas</a>
+                <a href="{{ url_for('lista_encontros') }}" class="btn btn-gold px-4"><i class="fa-solid fa-scroll me-1"></i> Ver Todos os Encontros Salvos</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

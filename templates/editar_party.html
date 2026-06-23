@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-rpg p-4 shadow">
+            <h3 class="fw-bold text-warning mb-4"><i class="fa-solid fa-pen-to-square me-2"></i>Editar Grupo</h3>
+            
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-bold text-light-rpg">Nome do Grupo</label>
+                    <input type="text" name="nome" class="form-control" value="{{ party.nome }}" required style="background-color: #FFFFFF !important;">
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="form-label fw-bold text-light-rpg">Qtd. Jogadores</label>
+                        <input type="number" name="qtd" class="form-control" value="{{ party.qtd_jogadores }}" min="1" required style="background-color: #FFFFFF !important;">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-bold text-light-rpg">Nível</label>
+                        <input type="number" name="nivel" class="form-control" value="{{ party.nivel_jogadores }}" min="1" max="20" required style="background-color: #FFFFFF !important;">
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <a href="{{ url_for('lista_partys') }}" class="btn btn-outline-light w-100 fw-bold">Cancelar</a>
+                    <button type="submit" class="btn btn-gold w-100"><i class="fa-solid fa-floppy-disk me-1"></i> Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,9 +1,14 @@
 import os
 import json
+import os
+from flask import Flask
+
+app = Flask(__name__, 
+            template_folder=os.path.abspath('templates'), 
+            static_folder=os.path.abspath('static'))
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 
-app = Flask(__name__)
 
 # Configuração do Banco de Dados SQLite
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))

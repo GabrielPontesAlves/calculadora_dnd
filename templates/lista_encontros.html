@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold text-warning mb-1"><i class="fa-solid fa-crossed-swords me-2"></i>Histórico de Encontros Salvos</h2>
+        <p class="text-muted-rpg">Gerencie, exclua ou reabra os combates criados anteriormente para a sua campanha.</p>
+    </div>
+</div>
+
+{% if encontros %}
+<div class="row row-cols-1 row-cols-md-2 g-3">
+    {% for e in encontros %}
+    <div class="col">
+        <div class="card card-rpg h-100 shadow p-2">
+            <div class="card-body d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h4 class="fw-bold text-light-rpg mb-0">{{ e.nome }}</h4>
+                        
+                        {% if e.dificuldade == 'Mortal' %}
+                            <span class="badge bg-danger text-white px-2 py-1"><i class="fa-solid fa-skull me-1"></i>Mortal</span>
+                        {% elif e.dificuldade == 'Difícil' %}
+                            <span class="badge bg-warning text-dark px-2 py-1" style="background-color: #E0A800 !important;"><i class="fa-solid fa-burst me-1"></i>Difícil</span>
+                        {% elif e.dificuldade == 'Médio' %}
+                            <span class="badge px-2 py-1" style="background-color: #D0C3B1 !important; color: #3B2F2F;"><i class="fa-solid fa-shield me-1"></i>Médio</span>
+                        {% else %}
+                            <span class="badge bg-success text-white px-2 py-1"><i class="fa-solid fa-feather me-1"></i>Fácil</span>
+                        {% endif %}
+                    </div>
+
+                    <h6 class="text-muted-rpg small mb-3">
+                        <i class="fa-solid fa-shield-halved text-warning me-1"></i>Grupo: 
+                        <span class="fw-bold" style="color: #7A2021;">{{ e.party.nome }}</span> 
+                        <span class="small text-muted-rpg">({{ e.party.qtd_jogadores }} jog. / Nv {{ e.party.nivel_jogadores }})</span>
+                    </h6>
+
+                    <div class="bg-dark p-2 rounded mb-3 border border-secondary" style="background-color: #F5EDF2; border-color: #D0C3B1 !important;">
+                        <span class="text-uppercase text-muted-rpg d-block mb-1" style="font-size: 0.75rem; font-weight: bold;">Criaturas Enfrentadas:</span>
+                        <div class="d-flex flex-wrap gap-1">
+                            {% set monstros = json.loads(e.monstros_json) %}
+                            
+                            {% for monstro_nome in monstros %}
+                                <span class="badge small text-dark" style="background-color: #EFE6DC; border: 1px solid #C4B49F;">{{ monstro_nome }}</span>
+                            {% else %}
+                                <span class="text-muted small">Nenhuma criatura registrada.</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 pt-2 mt-3 border-top" style="border-color: rgba(60, 50, 40, 0.1) !important;">
+                    <a href="{{ url_for('carregar_encontro_para_editar', id=e.id) }}" class="btn btn-sm btn-warning fw-bold flex-fill"><i class="fa-solid fa-gears me-1"></i> Editar Criaturas</a>
+                    <a href="{{ url_for('deletar_encontro', id=e.id) }}" class="btn btn-sm btn-outline-danger flex-fill fw-bold" onclick="return confirm('Tem certeza que deseja apagar permanentemente este encontro?')"><i class="fa-solid fa-trash-can me-1"></i> Excluir</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center text-muted-rpg py-5 card card-rpg shadow">
+    <i class="fa-solid fa-folder-open fa-3x mb-3 text-warning" style="opacity: 0.5;"></i>
+    <p class="mb-0 fw-bold">Nenhum encontro foi salvo ou registrado até o momento.</p>
+    <div>
+        <a href="/" class="btn btn-gold btn-sm mt-3 px-4">Criar Primeiro Encontro</a>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

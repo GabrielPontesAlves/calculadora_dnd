@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-rpg p-4 shadow">
+            <h3 class="fw-bold text-warning mb-3"><i class="fa-solid fa-users-rectangle me-2"></i>Configurar Grupo de Jogadores</h3>
+            <p class="text-muted-rpg small">Insira os dados do grupo que vai enfrentar o combate atual para calcularmos o nível de desafio.</p>
+            <hr class="border-secondary" style="opacity: 0.15;">
+
+            <form method="POST" action="{{ url_for('dados_jogadores') }}">
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-light-rpg">Nome do Encontro</label>
+                    <input type="text" name="nome_encontro" class="form-control" placeholder="Ex: Emboscada na Estrada, Covil do Dragão" required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-light-rpg">Escolha um Grupo (Party)</label>
+                    <select name="party_id" class="form-select" onchange="toggleNovaParty(this.value)">
+                        <option value="nova">++ Criar Novo Grupo para este Encontro ++</option>
+                        {% for p in parties %}
+                            <option value="{{ p.id }}">{{ p.nome }} ({{ p.qtd_jogadores }} Jogadores - Nível {{ p.nivel_jogadores }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div id="secao_nova_party" class="p-3 mb-4 rounded" style="background-color: #F5EDF2; border: 1px solid #C4B49F; border-left: 4px solid #7A2021; transition: all 0.3s ease;">
+                    <h5 class="text-warning small text-uppercase fw-bold mb-3"><i class="fa-solid fa-shield-halved me-1"></i>Dados do Novo Grupo</h5>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small text-muted-rpg">Nome do Grupo</label>
+                        <input type="text" name="nome_party" id="nome_party" class="form-control" placeholder="Ex: Os Pioneiros" style="background-color: #FFFFFF !important;">
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small text-muted-rpg">Qtd de Jogadores</label>
+                            <input type="number" name="qtd_players" id="qtd_players" class="form-control" value="4" min="1" style="background-color: #FFFFFF !important;">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small text-muted-rpg">Nível do Grupo</label>
+                            <input type="number" name="nivel_players" id="nivel_players" class="form-control" value="1" min="1" max="20" style="background-color: #FFFFFF !important;">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2 justify-content-between">
+                    <a href="/" class="btn btn-outline-light"><i class="fa-solid fa-arrow-left me-1"></i> Voltar</a>
+                    <button type="submit" class="btn btn-gold px-4"><i class="fa-solid fa-calculator me-1"></i> Calcular e Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleNovaParty(valor) {
+    const secao = document.getElementById('secao_nova_party');
+    const inputs = secao.querySelectorAll('input');
+    if (valor === 'nova') {
+        secao.style.display = 'block';
+        inputs.forEach(i => i.removeAttribute('disabled'));
+    } else {
+        secao.style.display = 'none';
+        inputs.forEach(i => i.setAttribute('disabled', 'true'));
+    }
+}
+</script>
+
+{% endblock %}

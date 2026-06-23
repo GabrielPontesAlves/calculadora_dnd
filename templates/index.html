@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="p-4 mb-4 rounded-3 card-rpg shadow">
+            <h2 class="fw-bold text-warning mb-1"><i class="fa-solid fa-dragon me-2"></i>Encontros de D&D 5e</h2>
+            <p class="text-muted-rpg mb-3">Filtre e selecione as ameaças ideais para desafiar seus jogadores.</p>
+            <hr class="border-secondary" style="opacity: 0.15;">
+            
+            <form method="GET" action="/" class="row g-3 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label small text-uppercase fw-bold text-muted-rpg">Tipo de Criatura</label>
+                    <select name="tipo" class="form-select">
+                        <option value="">Todos os Tipos</option>
+                        <option value="Humanoide" {% if filtro_tipo == 'Humanoide' %}selected{% endif %}>Humanoide</option>
+                        <option value="Besta" {% if filtro_tipo == 'Besta' %}selected{% endif %}>Besta</option>
+                        <option value="Monstruosidade" {% if filtro_tipo == 'Monstruosidade' %}selected{% endif %}>Monstruosidade</option>
+                        <option value="Dragão" {% if filtro_tipo == 'Dragão' %}selected{% endif %}>Dragão</option>
+                        <option value="Morto-Vivo" {% if filtro_tipo == 'Morto-Vivo' %}selected{% endif %}>Morto-Vivo</option>
+                        <option value="Fada" {% if filtro_tipo == 'Fada' %}selected{% endif %}>Fada</option>
+                        <option value="Construto" {% if filtro_tipo == 'Construto' %}selected{% endif %}>Construto</option>
+                    </select>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small text-uppercase fw-bold text-muted-rpg">Habitat</label>
+                    <select name="habitat" class="form-select">
+                        <option value="">Todos os Habitats</option>
+                        <option value="Floresta" {% if filtro_habitat == 'Floresta' %}selected{% endif %}>Floresta</option>
+                        <option value="Masmorra" {% if filtro_habitat == 'Masmorra' %}selected{% endif %}>Masmorra</option>
+                        <option value="Montanha" {% if filtro_habitat == 'Montanha' %}selected{% endif %}>Montanha</option>
+                        <option value="Pântano" {% if filtro_habitat == 'Pântano' %}selected{% endif %}>Pântano</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-gold"><i class="fa-solid fa-filter me-1"></i> Filtrar</button>
+                </div>
+            </form>
+            {% if filtro_tipo or filtro_habitat %}
+                <div class="mt-2 text-end">
+                    <a href="/" class="text-warning text-decoration-none small fw-bold"><i class="fa-solid fa-trash-can me-1"></i> Limpar Filtros</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 g-3">
+            {% for monstro in monstros %}
+            <div class="col">
+                <div class="card card-rpg h-100 shadow">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex gap-3 mb-3">
+                                <img src="{{ url_for('static', filename=monstro.imagem) }}" 
+                                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='default_monstro.jpg') }}';"
+                                     alt="{{ monstro.nome }}" 
+                                     class="rounded border"
+                                     style="width: 120px; height: 120px; object-fit: contain; object-position: center; flex-shrink: 0; background-color: #FFFDF9; border-color: #D0C3B1 !important; padding: 4px;">
+                                
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <h4 class="card-title fw-bold text-light-rpg mb-0">{{ monstro.nome }}</h4>
+                                        <span class="badge badge-nd">ND {{ monstro.nd }}</span>
+                                    </div>
+                                    <h6 class="text-muted-rpg small mt-2 mb-0">
+                                        <i class="fa-solid fa-mask me-1 text-warning"></i>{{ monstro.tipo }}
+                                    </h6>
+                                    <h6 class="text-muted-rpg small mt-1 mb-0">
+                                        <i class="fa-solid fa-compass me-1 text-warning"></i>{{ monstro.habitat }}
+                                    </h6>
+                                </div>
+                            </div>
+
+                            {% if monstro.descricao %}
+                                <p class="card-text text-muted-rpg small text-truncate-3" style="font-style: italic; background: #F5EDF2; padding: 10px; border-radius: 4px; border-left: 3px solid #7A2021;">
+                                    "{{ monstro.descricao }}"
+                                </p>
+                                <button type="button" class="btn btn-sm btn-link text-warning p-0 mb-3 text-decoration-none fw-bold" data-bs-toggle="modal" data-bs-target="#modalLore{{ monstro.id }}">
+                                    <i class="fa-solid fa-book-open me-1"></i> Ler Lore Completo
+                                </button>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-2 pt-3 border-top" style="border-color: rgba(60, 50, 40, 0.1) !important;">
+                            <form action="{{ url_for('adicionar_monstro', monstro_id=monstro.id) }}" method="GET" class="d-flex align-items-center justify-content-between">
+                                <input type="hidden" name="tipo" value="{{ filtro_tipo }}">
+                                <input type="hidden" name="habitat" value="{{ filtro_habitat }}">
+                                
+                                <div class="input-group input-group-sm w-50">
+                                    <button class="btn btn-outline-light" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">-</button>
+                                    <input type="number" name="quantidade" class="form-control text-center fw-bold" value="1" min="1" max="20">
+                                    <button class="btn btn-outline-light" type="button" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">+</button>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-sm btn-warning"><i class="fa-solid fa-plus me-1"></i>Adicionar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalLore{{ monstro.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="background-color: #FFFDF9; border: 2px solid #7A2021; color: #3B2F2F;">
+                        <div class="modal-header" style="border-bottom: 1px solid rgba(60, 50, 40, 0.1);">
+                            <h5 class="modal-title fw-bold text-warning"><i class="fa-solid fa-scroll me-2"></i>Compêndio de Criaturas</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="text-center mb-3">
+                                <img src="{{ url_for('static', filename=monstro.imagem) }}" 
+                                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='default_monstro.jpg') }}';"
+                                     alt="Ilustração de {{ monstro.nome }}" 
+                                     class="img-fluid rounded shadow-sm border p-1" 
+                                     style="max-height: 250px; width: auto; object-fit: contain; background-color: #FFFDF9; border-color: #D0C3B1 !important;">
+                            </div>
+                            
+                            <h4 class="fw-bold text-center mb-1" style="color: #7A2021;">{{ monstro.nome }}</h4>
+                            <p class="text-center text-muted-rpg small mb-3">{{ monstro.tipo }} &bull; {{ monstro.habitat }}</p>
+                            <hr class="my-3" style="border-color: #7A2021; opacity: 0.15; border-width: 2px;">
+                            
+                            <div class="text-start px-2" style="color: #3B2F2F; line-height: 1.6; font-size: 0.95rem; font-style: italic;">
+                                "{{ monstro.descricao }}"
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="border-top: 1px solid rgba(60, 50, 40, 0.1);">
+                            <button type="button" class="btn btn-sm" style="background-color: #EFE6DC; color: #3B2F2F; border: 1px solid #C4B49F;" data-bs-dismiss="modal">Fechar Registro</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="sidebar-carrinho shadow position-sticky" style="top: 20px;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold text-warning mb-0"><i class="fa-solid fa-swords me-2"></i>No Encontro:</h4>
+                {% if session.get('carrinho') %}
+                    <a href="{{ url_for('limpar_carrinho') }}" class="btn btn-sm btn-outline-danger py-0 px-2 small text-decoration-none fw-bold">Limpar Tudo</a>
+                {% endif %}
+            </div>
+
+            {% if session.get('carrinho') %}
+                <div class="list-group list-group-flush mb-4 overflow-auto" style="max-height: 350px;">
+                    {% for item in session['carrinho'] %}
+                    <div class="list-group-item bg-transparent border-bottom px-0 d-flex justify-content-between align-items-center" style="border-color: rgba(60, 50, 40, 0.1) !important;">
+                        <div>
+                            <span class="fw-bold" style="color: #3B2F2F;">{{ item.nome }}</span>
+                            <small class="text-muted-rpg d-block">ND {{ item.nd }}</small>
+                        </div>
+                        <a href="{{ url_for('remover_monstro', monstro_id=item.id) }}" class="text-danger p-2"><i class="fa-solid fa-circle-xmark fa-lg"></i></a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-grid mt-3">
+                    {% if modo_edicao %}
+                        <a href="{{ url_for('salvar_edicao_encontro') }}" class="btn btn-success fw-bold py-2 shadow text-white"><i class="fa-solid fa-floppy-disk me-2"></i>Salvar Alterações</a>
+                    {% else %}
+                        <a href="{{ url_for('dados_jogadores') }}" class="btn btn-gold fw-bold py-2 shadow">Avançar para Jogadores <i class="fa-solid fa-arrow-right ms-1"></i></a>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="text-center text-muted-rpg py-5">
+                    <i class="fa-solid fa-ghost fa-3x mb-3" style="opacity: 0.4; color: #7A2021;"></i>
+                    <p class="mb-0 fw-bold">Nenhuma criatura adicionada ao combate ainda.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
