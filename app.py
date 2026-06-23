@@ -288,5 +288,12 @@ def deletar_encontro(id):
     return redirect(url_for('lista_encontros'))
 
 
+import os
+
+# ... resto do seu código ...
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    # A Render define uma variável de ambiente chamada PORT. Se não achar, usa a 5000 (local)
+    porta = int(os.environ.get("PORT", 5000))
+    # O host '0.0.0.0' é obrigatório para o site ficar público no servidor
+    app.run(host='0.0.0.0', port=porta)
